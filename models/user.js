@@ -3,13 +3,17 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
-    name: String,
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     createdAt: {
       type: Date,
       default: Date.now,
     },
   },
-  { collection: 'user' }
+  { collection: 'user' },
 );
 
 const userModel = mongoose.model('User', userSchema);
@@ -37,13 +41,13 @@ const findList = async () => {
 };
 
 const create = async (user) => {
-  if (!user || !user.name) {
-    return new Error();
-  }
-  const newUser = new userModel({
-    name: user.name,
-  });
   return new Promise((res, rej) => {
+    if (!user || !user.name) {
+      return rej(new Error());
+    }
+    const newUser = new userModel({
+      name: user.name,
+    });
     newUser.save((err, doc) => {
       if (err) {
         rej(err);

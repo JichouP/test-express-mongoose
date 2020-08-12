@@ -2,19 +2,16 @@ const User = require('../models/user');
 
 const find = async (req, res, next) => {
   const { id } = req.params;
-  await User.find({ _id: id })
-    .then((doc) => {
-      res.status(200).send(doc);
-    })
-    .catch((reason) => {
-      console.log(reason);
-      next(reason);
-    });
+  const data = await User.find({ _id: id }).catch((reason) => {
+    res.status(400).send('Bad Request');
+    next(reason);
+  });
+  res.status(200).send(data);
 };
 
 const findList = async (req, res, next) => {
   const data = await User.findList().catch((reason) => {
-    console.log(reason);
+    res.status(400).send('Bad Request');
     next(reason);
   });
   res.status(200).send(data);
@@ -22,11 +19,21 @@ const findList = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   const { name } = req.body;
-  const data = await User.create({ name }).catch((reason) => {
-    console.log(reason);
-    next(reason);
-  });
-  res.status(201).send(data);
+  if (!name) {
+    return res.status(400).send('Bad Request');
+  }
+  const account = await User.find({ name });
+  if (account) {
+    return res.status(400).send('Bad Request');
+  }
+  const data = await User.create({ name })
+    .then((data) => {
+      res.status(201).send(data);
+    })
+    .catch((reason) => {
+      res.status(400).send('Bad Request');
+      next(reason);
+    });
 };
 
 exports.find = find;

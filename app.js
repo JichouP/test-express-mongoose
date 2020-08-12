@@ -1,11 +1,20 @@
 const http = require('http');
 const express = require('express');
+const mongoose = require('mongoose');
 const User = require('./routes/user');
 
 const app = express();
 
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect('mongodb://localhost:27017/express-test', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+  });
+}
+
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/user', User.findList);
 app.get('/user/:id', User.find);
@@ -20,6 +29,10 @@ app.use((err, req, res, next) => {
   res.json({ message: err.message });
 });
 
-http.createServer(app).listen(3000, () => {
-  console.log('listening at 3000');
-});
+if (process.env.NODE_ENV !== 'test') {
+  http.createServer(app).listen(3000, () => {
+    console.log('listening at 3000');
+  });
+}
+
+module.exports = app;
