@@ -1,17 +1,18 @@
-const request = require('supertest');
-const { connectMock, disconnectMock } = require('../../utils/util');
-const userModel = require('../../models/user').userModel;
-const app = require('../../app');
+import mongoose from 'mongoose';
+import request from 'supertest';
+import { connectMock, disconnectMock } from '../../utils/util';
+import { userModel, UserDocument } from '../../models/user';
+import app from '../../app';
 const initUsers = [{ name: 'user1' }, { name: 'user2' }, { name: 'user3' }];
-let users = [];
+let users: UserDocument[] = [];
 
 describe('integration user', () => {
-  beforeAll(connectMock('jest-integration'));
+  beforeAll(connectMock(mongoose, 'jest-integration'));
   beforeEach(async () => {
     await userModel.deleteMany({});
     users = await userModel.insertMany(initUsers);
   });
-  afterAll(disconnectMock);
+  afterAll(disconnectMock(mongoose));
 
   test('GET /user', async () => {
     const response = await request(app)

@@ -1,17 +1,17 @@
-const mongoose = require('mongoose');
-const { createRequestMock, connectMock, disconnectMock } = require('../../utils/util');
-const User = require('../../routes/user');
-const userModel = require('../../models/user').userModel;
+import mongoose from 'mongoose';
+import { createRequestMock, connectMock, disconnectMock } from '../../utils/util';
+import User from '../../routes/user';
+import { userModel, UserDocument } from '../../models/user';
 const initUsers = [{ name: 'user1' }, { name: 'user2' }, { name: 'user3' }];
-let users = [];
+let users: UserDocument[] = [];
 
 describe('routes/user', () => {
-  beforeAll(connectMock('jest-routes'));
+  beforeAll(connectMock(mongoose, 'jest-routes'));
   beforeEach(async () => {
     await userModel.deleteMany({});
     users = await userModel.insertMany(initUsers);
   });
-  afterAll(disconnectMock);
+  afterAll(disconnectMock(mongoose));
 
   describe('findList', () => {
     test('shuld get user list', async () => {
@@ -45,6 +45,7 @@ describe('routes/user', () => {
       const [req, res, next] = createRequestMock({ body: { name: 'user4' } });
 
       await User.create(req, res, next);
+      expect(1).toBe(1);
       expect(res.status.calledWith(201)).toBeTruthy();
     });
     describe('validation', () => {

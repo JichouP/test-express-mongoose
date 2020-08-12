@@ -1,17 +1,17 @@
-const mongoose = require('mongoose');
-const { connectMock, disconnectMock } = require('../../utils/util');
-const User = require('../../models/user');
-const userModel = User.userModel;
+import mongoose from 'mongoose';
+import { connectMock, disconnectMock } from '../../utils/util';
+import User, { userModel, UserDocument } from '../../models/user';
+
 const initUsers = [{ name: 'user1' }, { name: 'user2' }, { name: 'user3' }];
-let users = [];
+let users: UserDocument[] = [];
 
 describe('model/user', () => {
-  beforeAll(connectMock('jest-model'));
+  beforeAll(connectMock(mongoose, 'jest-models'));
   beforeEach(async () => {
     await userModel.deleteMany({});
     users = await userModel.insertMany(initUsers);
   });
-  afterAll(disconnectMock);
+  afterAll(disconnectMock(mongoose));
 
   describe('findList', () => {
     test('shuld get user list', async () => {
@@ -22,6 +22,9 @@ describe('model/user', () => {
   describe('find', () => {
     test('shuld get user', async () => {
       const doc = await User.find({ _id: users[0]._id });
+      if (!doc) {
+        return;
+      }
       expect(doc.name).toEqual(users[0].name);
       expect(doc.createdAt instanceof Date).toBeTruthy();
       expect(mongoose.isValidObjectId(doc._id)).toBeTruthy();
@@ -40,7 +43,7 @@ describe('model/user', () => {
         await expect(User.create({ name: 'user1' })).rejects.toThrow();
       });
       test('should fail to create blank user', async () => {
-        await expect(User.create({})).rejects.toThrow();
+        await expect(User.create({} as UserDocument)).rejects.toThrow();
       });
     });
   });
