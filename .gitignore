@@ -1,5 +1,6 @@
 globalConfig.json
 .vscode
+dist
 
 # Logs
 logs
