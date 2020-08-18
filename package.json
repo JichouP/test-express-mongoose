@@ -10,7 +10,8 @@
     "build-prod": "webpack --config webpack.prod.ts",
     "test": "jest --color",
     "testWithCoverage": "jest --collectCoverage --color",
-    "openCoverage": "sensible-browser ./coverage/lcov-report/index.html"
+    "openCoverage": "sensible-browser ./coverage/lcov-report/index.html",
+    "tsc_babel": "tsc babel.config.ts"
   },
   "repository": {
     "type": "git",
