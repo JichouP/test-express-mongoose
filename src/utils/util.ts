@@ -8,6 +8,7 @@ export const createRequestMock = (request?: {}): [
   mockRes.MockRes & Response,
   jest.Mock<any, any>,
 ] => [mockReq(request), mockRes(), jest.fn()];
+
 export const connectMock = (
   mongoose: Mongoose,
   dbName: 'jest-routes' | 'jest-models' | 'jest-integration',
@@ -20,9 +21,11 @@ export const connectMock = (
     dbName: dbName,
   });
 };
+
 export const disconnectMock = (mongoose: Mongoose) => () => {
   mongoose.connection.close();
 };
+
 export const createHandler = (
   handler: (req: Request<ParamsDictionary>, res: Response<any>, next: NextFunction) => any,
 ) => {
